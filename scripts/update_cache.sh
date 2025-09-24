@@ -22,6 +22,23 @@ log_line() {
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] $1" >> "$LOG_FILE"
 }
 
+log_download_link() {
+    local url="$1"
+    local label="${2:-下载链接}"
+
+    if [[ -z "$url" ]]; then
+        log_line "  ${label}: 未提供"
+        return
+    fi
+
+    local sanitized="$url"
+    sanitized="${sanitized//token=[^&]*/token=***}"
+    sanitized="${sanitized//access_token=[^&]*/access_token=***}"
+    sanitized="${sanitized//Authorization=[^&]*/Authorization=***}"
+
+    log_line "  ${label}: ${sanitized}"
+}
+
 # 检查网络连接
 if ! ping -c 1 8.8.8.8 >/dev/null 2>&1; then
     log_line "网络连接失败"
@@ -90,12 +107,12 @@ update_software() {
     if [[ -n "$official_source" ]]; then
         log_line "  官方来源: $official_source"
     fi
-    log_line "  下载链接: $url"
+    log_download_link "$url"
 
     local resolved_url
     resolved_url=$(with_github_mirror "$url")
     if [[ "$resolved_url" != "$url" ]]; then
-        log_line "  启用镜像: $resolved_url"
+        log_download_link "$resolved_url" "镜像链接"
     fi
 
     local remote_size="$(get_remote_size "$resolved_url" || true)"
@@ -453,7 +470,7 @@ sleep 2
 update_software "WeChat" "https://dldir1v6.qq.com/weixin/Universal/Mac/WeChatMac.dmg" "WeChat_M.dmg" 150000000 "腾讯 macOS 官方下载 https://dldir1v6.qq.com/weixin/Universal/Mac/WeChatMac.dmg"
 sleep 2
 
-update_from_github "Wave Terminal" "wavetermdev/waveterm" "Wave-darwin-arm64.*\\.dmg$" "Wave_M.dmg" 60000000
+update_from_github "Wave Terminal" "wavetermdev/waveterm" "Wave-darwin-arm64.*\\.dmg$" "Wave_M.dmg" 60000000 "Wave GitHub Releases https://github.com/wavetermdev/waveterm/releases/latest"
 sleep 2
 
 update_trae_pkg "Trae" "Trae_M.dmg" 60000000
@@ -462,7 +479,7 @@ sleep 2
 update_software "Qoder" "https://download.qoder.com/release/latest/Qoder-darwin-arm64.dmg" "Qoder_M.dmg" 60000000 "Qoder 官方 CDN https://download.qoder.com/release/latest/Qoder-darwin-arm64.dmg"
 sleep 2
 
-update_from_github "Clash Verge" "clash-verge-rev/clash-verge-rev" "(arm64|aarch64).*\\.dmg$" "ClashVerge_M.dmg" 20000000
+update_from_github "Clash Verge" "clash-verge-rev/clash-verge-rev" "(arm64|aarch64).*\\.dmg$" "ClashVerge_M.dmg" 20000000 "Clash Verge GitHub Releases https://github.com/clash-verge-rev/clash-verge-rev/releases/latest"
 sleep 2
 
 update_software "Visual Studio Code" "https://code.visualstudio.com/sha/download?build=stable&os=darwin-arm64" "VSCode_ARM64.zip" 60000000 "VS Code 官方稳定版 https://code.visualstudio.com/sha/download?build=stable&os=darwin-arm64"
@@ -480,7 +497,7 @@ sleep 2
 update_nodejs_pkg "Node.js" "NodeJS_ARM64.pkg" 50000000
 sleep 2
 
-update_from_github "Traefik" "traefik/traefik" "traefik_v.*darwin_arm64\\.tar\\.gz$" "Traefik_M.tar.gz" 10000000
+update_from_github "Traefik" "traefik/traefik" "traefik_v.*darwin_arm64\\.tar\\.gz$" "Traefik_M.tar.gz" 10000000 "Traefik 官方最新发布页 https://github.com/traefik/traefik/releases/latest"
 sleep 2
 
 log_line "更新检查完成"
