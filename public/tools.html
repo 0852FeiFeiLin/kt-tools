@@ -104,7 +104,7 @@
                     <span class="link-icon">🧰</span> 下载 mac_m4_installer.sh
                 </a>
             </div>
-            <div class="code-snippet">curl -fsSL http://&lt;SERVER_IP&gt;:&lt;PORT&gt;/installers/quick_install.sh | bash</div>
+            <div id="quick-install-command" class="code-snippet">curl -fsSL http://&lt;SERVER_IP&gt;:&lt;PORT&gt;/installers/quick_install.sh | bash</div>
         </div>
     </div>
 
@@ -338,5 +338,28 @@
         <p>提示：若本地缓存缺失，可先运行服务器端 <code>bash scripts/update_cache.sh</code> 同步最新安装包。</p>
     </div>
 </div>
+<script>
+  (function() {
+    var snippet = document.getElementById('quick-install-command');
+    if (!snippet) return;
+    fetch('/installers/quick_install.sh')
+      .then(function(res) {
+        if (!res.ok) throw new Error('failed to load quick_install.sh');
+        return res.text();
+      })
+      .then(function(content) {
+        var ipMatch = content.match(/SERVER_IP="([^"]+)"/);
+        var portMatch = content.match(/SERVER_PORT="([^"]+)"/);
+        var ip = ipMatch && ipMatch[1];
+        var port = portMatch && portMatch[1];
+        if (!ip || !port) return;
+        var cmd = 'curl -fsSL http://' + ip + ':' + port + '/installers/quick_install.sh | bash';
+        snippet.textContent = cmd;
+      })
+      .catch(function() {
+        // 保留默认占位文本
+      });
+  })();
+</script>
 </body>
 </html>

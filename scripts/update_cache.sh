@@ -10,13 +10,15 @@ SOFTWARE_DIR="$CACHE_DIR/macos-arm"
 LOG_DIR="$ROOT_DIR/resources/logs"
 LOG_FILE="$LOG_DIR/update.log"
 TIMESTAMP=$(date "+%Y-%m-%d %H:%M:%S")
-USER_AGENT="mac-m4-cache/1.2"
+USER_AGENT="mac-m4-cache/1.1"
 
 mkdir -p "$SOFTWARE_DIR" "$LOG_DIR"
 touch "$LOG_FILE"
 INITIAL_LOG_LINES=$(wc -l < "$LOG_FILE" 2>/dev/null || echo 0)
 
-printf '%s\n' "======================================" "[$TIMESTAMP] 开始更新Mac M4软件缓存" "======================================"
+echo "======================================"
+echo "[$TIMESTAMP] 开始更新Mac M4软件缓存"
+echo "======================================"
 
 log_line() {
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] $1" >> "$LOG_FILE"
@@ -47,9 +49,23 @@ fi
 
 with_github_mirror() {
     local url="$1"
+
     case "$url" in
-        https://github.com/*|https://raw.githubusercontent.com/*|https://api.github.com/*|https://objects.githubusercontent.com/*)
-            echo "https://mirror.ghproxy.com/${url#https://}"
+        https://github.com/Homebrew/brew/releases/download/*|\
+        https://github.com/Homebrew/brew/releases/latest/download/*)
+            echo "$url"
+            return 0
+            ;;
+    esac
+
+    case "$url" in
+        https://github.com/*|\
+        https://raw.githubusercontent.com/*|\
+        https://api.github.com/*|\
+        https://objects.githubusercontent.com/*|\
+        https://release-assets.githubusercontent.com/*)
+            local stripped="${url#https://}"
+            echo "https://mirror.ghproxy.com/${stripped}"
             ;;
         *)
             echo "$url"
@@ -81,6 +97,12 @@ _download_with_clients() {
 download_to_temp() {
     local url="$1"
     local dest="$2"
+    local disable_mirror="${3:-0}"
+
+    if [[ "$disable_mirror" == "1" ]]; then
+        _download_with_clients "$url" "$dest"
+        return
+    fi
 
     local mirrored
     mirrored=$(with_github_mirror "$url")
@@ -101,6 +123,7 @@ update_software() {
     local filename="$3"
     local min_size="${4:-1000000}"
     local official_source="${5:-}"
+    local disable_mirror="${6:-0}"
     local target="$SOFTWARE_DIR/$filename"
 
     log_line "检查 $name..."
@@ -109,10 +132,12 @@ update_software() {
     fi
     log_download_link "$url"
 
-    local resolved_url
-    resolved_url=$(with_github_mirror "$url")
-    if [[ "$resolved_url" != "$url" ]]; then
-        log_download_link "$resolved_url" "镜像链接"
+    local resolved_url="$url"
+    if [[ "$disable_mirror" != "1" ]]; then
+        resolved_url=$(with_github_mirror "$url")
+        if [[ "$resolved_url" != "$url" ]]; then
+            log_download_link "$resolved_url" "镜像链接"
+        fi
     fi
 
     local remote_size="$(get_remote_size "$resolved_url" || true)"
@@ -131,7 +156,7 @@ update_software() {
             log_line "更新 $name (大小变化: $local_size -> $remote_size)"
             cp "$target" "$target.backup.$(date +%Y%m%d_%H%M%S)" 2>/dev/null || true
 
-            if download_to_temp "$url" "$target.tmp"; then
+            if download_to_temp "$url" "$target.tmp" "$disable_mirror"; then
                 local downloaded_size
                 downloaded_size=$(stat -c%s "$target.tmp" 2>/dev/null || echo 0)
                 if [[ "$downloaded_size" -ge "$min_size" ]]; then
@@ -156,7 +181,7 @@ update_software() {
     fi
 
     log_line "下载新软件 $name"
-    if download_to_temp "$url" "$target"; then
+    if download_to_temp "$url" "$target" "$disable_mirror"; then
         local downloaded_size
         downloaded_size=$(stat -c%s "$target" 2>/dev/null || echo 0)
         if [[ "$downloaded_size" -ge "$min_size" ]]; then
@@ -367,7 +392,7 @@ update_homebrew_pkg() {
         return 1
     fi
 
-    update_software "$name" "$url" "$filename" "$min_size" "$official_page"
+    update_software "$name" "$url" "$filename" "$min_size" "$official_page" 1
 }
 
 get_latest_git_pkg_url() {
@@ -488,9 +513,6 @@ sleep 2
 update_software "WPS Office" "https://package.mac.wpscdn.cn/mac_wps_pkg/wps_installer/WPS_Office_Installer.zip" "WPS_M.zip" 5000000 "WPS 官方分发 https://package.mac.wpscdn.cn/mac_wps_pkg/wps_installer/WPS_Office_Installer.zip"
 sleep 2
 
-update_git_pkg "Git" "Git_M.dmg" 50000000
-sleep 2
-
 update_homebrew_pkg "Homebrew" "Homebrew.pkg" 20000000
 sleep 2
 
@@ -511,7 +533,7 @@ else
     log_line "本次所有软件均更新成功"
 fi
 
-printf '%s\n' "======================================"
+echo "======================================"
 
 log_line "当前软件包状态:"
 cd "$SOFTWARE_DIR"
@@ -530,8 +552,10 @@ log_line "Mac M4软件缓存更新完成"
 start_line=$((INITIAL_LOG_LINES + 1))
 current_lines=$(wc -l < "$LOG_FILE" 2>/dev/null || echo 0)
 if (( start_line <= current_lines )); then
-    printf '\n本次更新日志：\n'
+    echo
+ echo '本次更新日志：'
     tail -n +"$start_line" "$LOG_FILE"
 else
-    printf '\n本次更新未生成新的日志条目。\n'
+    echo
+ echo '本次更新未生成新的日志条目。'
 fi
