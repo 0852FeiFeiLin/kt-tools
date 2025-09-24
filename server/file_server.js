@@ -274,6 +274,11 @@ const server = http.createServer((req, res) => {
     return;
   }
 
+  if (pathname === '/favorites') {
+    servePublic(res, 'favorites.html');
+    return;
+  }
+
   if (pathname === '/download') {
     servePublic(res, 'download.html');
     return;
@@ -290,10 +295,12 @@ const server = http.createServer((req, res) => {
     return;
   }
 
-  if (pathname.startsWith('/packages')) {
-    handlePackages(res, pathname);
-    return;
-  }
+  // if (pathname.startsWith('/packages')) {
+  //   res.statusCode = 404;
+  //   res.setHeader('Content-Type', 'text/html; charset=utf-8');
+  //   res.end('<h1>404 - 页面未找到</h1>');
+  //   return;
+  // }
 
   if (pathname === '/files') {
     const entries = readDirectorySafe(PUBLIC_DIR).map((dirent) => ({
