@@ -10,7 +10,7 @@ INSTALLER_DIR="$ROOT_DIR/public/installers"
 SOFTWARE_DIR="$ROOT_DIR/resources/software-cache/macos-arm"
 LOG_DIR="$ROOT_DIR/resources/logs"
 UPDATE_SCRIPT="$SCRIPT_DIR/update_cache.sh"
-DEFAULT_PORT=8000
+DEFAULT_PORT=8001
 
 detect_ip() {
     if command -v hostname >/dev/null 2>&1 && hostname -I >/dev/null 2>&1; then
