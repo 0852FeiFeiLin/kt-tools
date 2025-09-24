@@ -1,0 +1,12 @@
+node_modules/
+.DS_Store
+npm-debug.log*
+yarn-error.log
+
+resources/software-cache/macos-arm/*
+!resources/software-cache/macos-arm/.gitkeep
+resources/software-cache/*.zip
+resources/logs/*
+!resources/logs/.gitkeep
+
+public/installers/*.tmp

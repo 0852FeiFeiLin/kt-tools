@@ -1,0 +1,11 @@
+{
+  "name": "kt-tools",
+  "version": "1.0.0",
+  "description": "内网软件分发与资源共享服务器",
+  "main": "server/file_server.js",
+  "scripts": {
+    "start": "node server/file_server.js"
+  },
+  "keywords": ["mac", "software", "installer", "cache"],
+  "license": "MIT"
+}

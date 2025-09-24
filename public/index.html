@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>资源中心</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            width: 100%;
+        }
+
+        h1 {
+            text-align: center;
+            color: white;
+            font-size: 3rem;
+            margin-bottom: 50px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            animation: fadeInDown 0.8s ease;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            padding: 0 20px;
+        }
+
+        .menu-item {
+            background: white;
+            border-radius: 20px;
+            padding: 40px 30px;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-decoration: none;
+            display: block;
+            animation: fadeInUp 0.8s ease;
+            animation-fill-mode: both;
+        }
+
+        .menu-item:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+
+        .menu-item:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .menu-item:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+        }
+
+        .menu-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            display: block;
+            transition: transform 0.3s ease;
+        }
+
+        .menu-item:hover .menu-icon {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .menu-title {
+            font-size: 1.5rem;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .menu-desc {
+            font-size: 0.95rem;
+            color: #7f8c8d;
+            line-height: 1.6;
+        }
+
+        .tools-item {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .tools-item .menu-title,
+        .tools-item .menu-desc {
+            color: white;
+        }
+
+        .other-item {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+
+        .other-item .menu-title,
+        .other-item .menu-desc {
+            color: white;
+        }
+
+        .footer {
+            text-align: center;
+            color: white;
+            margin-top: 50px;
+            font-size: 0.9rem;
+            opacity: 0.8;
+            animation: fadeIn 1s ease;
+            animation-delay: 0.5s;
+            animation-fill-mode: both;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 0.8;
+            }
+        }
+
+        @media (max-width: 600px) {
+            h1 {
+                font-size: 2rem;
+                margin-bottom: 30px;
+            }
+
+            .menu-grid {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .menu-item {
+                padding: 30px 20px;
+            }
+
+            .menu-icon {
+                font-size: 3rem;
+            }
+
+            .menu-title {
+                font-size: 1.3rem;
+            }
+        }
+
+        /* 添加点击效果 */
+        .menu-item:active {
+            transform: scale(0.98);
+        }
+
+        /* 文件浏览器链接样式 */
+        .browse-link {
+            display: inline-block;
+            margin-top: 15px;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 0.85rem;
+            text-decoration: underline;
+            transition: color 0.3s ease;
+        }
+
+        .browse-link:hover {
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌟 资源中心</h1>
+
+        <div class="menu-grid">
+            <a href="/tools" class="menu-item tools-item">
+                <span class="menu-icon">🛠️</span>
+                <h2 class="menu-title">常用工具</h2>
+                <p class="menu-desc">科学上网、AI工具等实用软件下载</p>
+            </a>
+
+            <a href="/packages" class="menu-item other-item">
+                <span class="menu-icon">📦</span>
+                <h2 class="menu-title">安装包缓存</h2>
+                <p class="menu-desc">浏览服务器缓存的 macOS 安装包</p>
+            </a>
+
+            <a href="/other" class="menu-item other-item">
+                <span class="menu-icon">📂</span>
+                <h2 class="menu-title">其他资源</h2>
+                <p class="menu-desc">浏览所有文件和资源</p>
+            </a>
+        </div>
+
+        <div class="footer">
+            <p>Mac 新机推荐执行：curl -fsSL http://&lt;SERVER_IP&gt;:&lt;PORT&gt;/installers/quick_install.sh | bash</p>
+        </div>
+    </div>
+</body>
+</html>

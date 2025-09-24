@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>工具下载</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container { max-width: 1100px; margin: 0 auto; }
+        h1 {
+            text-align: center; color: white; margin-bottom: 40px;
+            font-size: 2.5rem; text-shadow: 0 8px 20px rgba(0,0,0,0.3);
+        }
+        .category {
+            background: white; border-radius: 18px; padding: 30px;
+            margin-bottom: 30px; box-shadow: 0 15px 40px rgba(0,0,0,0.18);
+            animation: fadeIn 0.4s ease;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .category-title {
+            font-size: 1.8rem; color: #2d3436; margin-bottom: 25px;
+            display: flex; align-items: center;
+        }
+        .category-icon { font-size: 1.8rem; margin-right: 12px; }
+        .tool-card {
+            background: #f8f9fb; border-radius: 12px; padding: 24px;
+            margin-bottom: 18px; border: 1px solid rgba(0,0,0,0.04);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .tool-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 30px rgba(102,126,234,0.15);
+            background: #fff;
+        }
+        .tool-header { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; }
+        .tool-name { font-size: 1.4rem; color: #2d3436; font-weight: 600; }
+        .tool-desc { color: #636e72; margin-top: 12px; }
+        .tool-links { margin-top: 18px; display: flex; flex-wrap: wrap; gap: 12px; }
+        .download-link {
+            display: inline-flex; align-items: center; padding: 10px 20px;
+            border-radius: 24px; font-weight: 500; text-decoration: none;
+            color: white; transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .download-link:hover { transform: translateY(-2px); }
+        .download-link.local {
+            background: linear-gradient(135deg, #56ab2f, #a8e063);
+            box-shadow: 0 8px 18px rgba(86,171,47,0.3);
+        }
+        .download-link.external {
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+            box-shadow: 0 8px 18px rgba(240,147,251,0.25);
+        }
+        .download-link.script {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            box-shadow: 0 8px 18px rgba(102,126,234,0.35);
+        }
+        .link-icon { margin-right: 8px; font-size: 1.2rem; }
+        .link-type { margin-left: 6px; font-size: 0.85rem; opacity: 0.9; }
+        .code-snippet {
+            margin-top: 15px; background: #2d3436; color: #ecf0f1;
+            padding: 14px 16px; border-radius: 10px; font-family: "SFMono-Regular",Consolas,Menlo,monospace;
+            font-size: 0.95rem; overflow-x: auto;
+        }
+        .footer {
+            text-align: center; color: rgba(255,255,255,0.85);
+            margin-top: 40px; font-size: 0.9rem;
+        }
+        @media (max-width: 768px) {
+            h1 { font-size: 2rem; }
+            .category { padding: 20px; }
+            .tool-links { flex-direction: column; }
+            .download-link { justify-content: center; width: 100%; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>🛠️ 工具下载中心</h1>
+
+    <div class="category">
+        <h2 class="category-title"><span class="category-icon">🚀</span>一键部署</h2>
+        <div class="tool-card">
+            <div class="tool-header">
+                <div class="tool-name">Mac M 系列一键安装脚本</div>
+            </div>
+            <p class="tool-desc">
+                适用于 Apple Silicon Mac，新机器执行一次即可批量安装 13 款常用软件，并自动配置 Dock、CLI 工具等。
+            </p>
+            <div class="tool-links">
+                <a class="download-link script" href="/installers/quick_install.sh" download>
+                    <span class="link-icon">📥</span> 下载 quick_install.sh
+                </a>
+                <a class="download-link script" href="/installers/mac_m4_installer.sh" download>
+                    <span class="link-icon">🧰</span> 下载 mac_m4_installer.sh
+                </a>
+            </div>
+            <div class="code-snippet">curl -fsSL http://&lt;SERVER_IP&gt;:&lt;PORT&gt;/installers/quick_install.sh | bash</div>
+        </div>
+    </div>
+
+    <div class="category">
+        <h2 class="category-title"><span class="category-icon">🌐</span>常用应用</h2>
+
+        <div class="tool-card">
+            <div class="tool-header">
+                <div class="tool-name">ChatGPT</div>
+            </div>
+            <p class="tool-desc">桌面端 ChatGPT 客户端，支持多模型与记忆功能。</p>
+            <div class="tool-links">
+                <a class="download-link local" href="/packages/ChatGPT_M.dmg">
+                    <span class="link-icon">💾</span> 本地缓存
+                    <span class="link-type">(macOS ARM64)</span>
+                </a>
+                <a class="download-link external" href="https://persistent.oaistatic.com/sidekick/public/ChatGPT.dmg" target="_blank" rel="noopener noreferrer">
+                    <span class="link-icon">🔗</span> 官方渠道
+                </a>
+            </div>
+        </div>
+
+        <div class="tool-card">
+            <div class="tool-header">
+                <div class="tool-name">Google Chrome</div>
+            </div>
+            <p class="tool-desc">多平台浏览器，内置同步与丰富插件。</p>
+            <div class="tool-links">
+                <a class="download-link local" href="/packages/Chrome_M.dmg">
+                    <span class="link-icon">💾</span> 本地缓存
+                    <span class="link-type">Universal</span>
+                </a>
+                <a class="download-link external" href="https://dl.google.com/chrome/mac/universal/stable/GGRO/googlechrome.dmg" target="_blank" rel="noopener noreferrer">
+                    <span class="link-icon">🔗</span> 官方渠道
+                </a>
+            </div>
+        </div>
+
+        <div class="tool-card">
+            <div class="tool-header">
+                <div class="tool-name">Docker Desktop</div>
+            </div>
+            <p class="tool-desc">容器开发环境，集成 Kubernetes、Compose 等功能。</p>
+            <div class="tool-links">
+                <a class="download-link local" href="/packages/Docker_M.dmg">
+                    <span class="link-icon">💾</span> 本地缓存
+                </a>
+                <a class="download-link external" href="https://desktop.docker.com/mac/main/arm64/Docker.dmg" target="_blank" rel="noopener noreferrer">
+                    <span class="link-icon">🔗</span> 官方渠道
+                </a>
+            </div>
+        </div>
+
+        <div class="tool-card">
+            <div class="tool-header">
+                <div class="tool-name">WeChat</div>
+            </div>
+            <p class="tool-desc">微信 macOS 客户端，支持视频会议与文件传输。</p>
+            <div class="tool-links">
+                <a class="download-link local" href="/packages/WeChat_M.dmg">
+                    <span class="link-icon">💾</span> 本地缓存
+                </a>
+                <a class="download-link external" href="https://dldir1v6.qq.com/weixin/Universal/Mac/WeChatMac.dmg" target="_blank" rel="noopener noreferrer">
+                    <span class="link-icon">🔗</span> 官方渠道
+                </a>
+            </div>
+        </div>
+
+        <div class="tool-card">
+            <div class="tool-header">
+                <div class="tool-name">Telegram</div>
+            </div>
+            <p class="tool-desc">跨平台即时通讯客户端，支持端到端加密与大文件传输。</p>
+            <div class="tool-links">
+                <a class="download-link local" href="/packages/Telegram_M.dmg">
+                    <span class="link-icon">💾</span> 本地缓存
+                </a>
+                <a class="download-link external" href="https://osx.telegram.org/updates/Telegram.dmg" target="_blank" rel="noopener noreferrer">
+                    <span class="link-icon">🔗</span> 官方渠道
+                </a>
+            </div>
+        </div>
+
+        <div class="tool-card">
+            <div class="tool-header">
+                <div class="tool-name">WPS Office</div>
+            </div>
+            <p class="tool-desc">集成文字、表格、演示于一体的办公套件，支持云文档协作。</p>
+            <div class="tool-links">
+                <a class="download-link local" href="/packages/WPS_M.zip">
+                    <span class="link-icon">💾</span> 本地缓存
+                </a>
+                <a class="download-link external" href="https://package.mac.wpscdn.cn/mac_wps_pkg/wps_installer/WPS_Office_Installer.zip" target="_blank" rel="noopener noreferrer">
+                    <span class="link-icon">🔗</span> 官方渠道
+                </a>
+            </div>
+        </div>
+
+        <div class="tool-card">
+            <div class="tool-header">
+                <div class="tool-name">Wave</div>
+            </div>
+            <p class="tool-desc">团队协作工具，提供任务管理与多端同步体验。</p>
+            <div class="tool-links">
+                <a class="download-link local" href="/packages/Wave_M.dmg">
+                    <span class="link-icon">💾</span> 本地缓存
+                </a>
+                <a class="download-link external" href="https://github.com/wavetermdev/waveterm/releases/latest" target="_blank" rel="noopener noreferrer">
+                    <span class="link-icon">🔗</span> 官方渠道
+                </a>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="category">
+        <h2 class="category-title"><span class="category-icon">🤖</span>AI / 系统工具</h2>
+
+        <div class="tool-card">
+            <div class="tool-header">
+                <div class="tool-name">Qoder</div>
+            </div>
+            <p class="tool-desc">AI 驱动的开发辅助工具，支持代码生成与调试建议。</p>
+            <div class="tool-links">
+                <a class="download-link local" href="/packages/Qoder_M.dmg">
+                    <span class="link-icon">💾</span> 本地缓存
+                </a>
+                <a class="download-link external" href="https://download.qoder.com/release/latest/Qoder-darwin-arm64.dmg" target="_blank" rel="noopener noreferrer">
+                    <span class="link-icon">🔗</span> 官方渠道
+                </a>
+            </div>
+        </div>
+
+        <div class="tool-card">
+            <div class="tool-header">
+                <div class="tool-name">Trae</div>
+            </div>
+            <p class="tool-desc">系统与网络实时监控工具，提供低占用的状态面板。</p>
+            <div class="tool-links">
+                <a class="download-link local" href="/packages/Trae_M.dmg">
+                    <span class="link-icon">💾</span> 本地缓存
+                </a>
+                <a class="download-link external" href="https://api.trae.ai/icube/api/v1/native/version/trae/latest" target="_blank" rel="noopener noreferrer">
+                    <span class="link-icon">🔗</span> 官方渠道
+                </a>
+            </div>
+        </div>
+
+        <div class="tool-card">
+            <div class="tool-header">
+                <div class="tool-name">Clash Verge</div>
+            </div>
+            <p class="tool-desc">多协议网络代理客户端，支持灵活的订阅管理与路由策略。</p>
+            <div class="tool-links">
+                <a class="download-link local" href="/packages/ClashVerge_M.dmg">
+                    <span class="link-icon">💾</span> 本地缓存
+                </a>
+                <a class="download-link external" href="https://github.com/clash-verge-rev/clash-verge-rev/releases/latest" target="_blank" rel="noopener noreferrer">
+                    <span class="link-icon">🔗</span> 官方渠道
+                </a>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="category">
+        <h2 class="category-title"><span class="category-icon">💻</span>开发与 CLI</h2>
+
+        <div class="tool-card">
+            <div class="tool-header">
+                <div class="tool-name">Visual Studio Code</div>
+            </div>
+            <p class="tool-desc">轻量级编辑器，支持大量扩展生态。</p>
+            <div class="tool-links">
+                <a class="download-link local" href="/packages/VSCode_ARM64.zip">
+                    <span class="link-icon">💾</span> 本地缓存
+                </a>
+                <a class="download-link external" href="https://code.visualstudio.com/sha/download?build=stable&os=darwin-arm64" target="_blank" rel="noopener noreferrer">
+                    <span class="link-icon">🔗</span> 官方渠道
+                </a>
+            </div>
+        </div>
+
+        <div class="tool-card">
+            <div class="tool-header">
+                <div class="tool-name">Node.js LTS</div>
+            </div>
+            <p class="tool-desc">Node.js 最新 LTS 版本的 ARM64 安装包。</p>
+            <div class="tool-links">
+                <a class="download-link local" href="/packages/NodeJS_ARM64.pkg">
+                    <span class="link-icon">💾</span> 本地缓存
+                </a>
+                <a class="download-link external" href="https://nodejs.org/dist/latest/node-latest.pkg" target="_blank" rel="noopener noreferrer">
+                    <span class="link-icon">🔗</span> 官方渠道
+                </a>
+            </div>
+        </div>
+
+        <div class="tool-card">
+            <div class="tool-header">
+                <div class="tool-name">Homebrew</div>
+            </div>
+            <p class="tool-desc">macOS 常用的包管理器，便于安装命令行工具。</p>
+            <div class="tool-links">
+                <a class="download-link local" href="/packages/Homebrew.pkg">
+                    <span class="link-icon">💾</span> 本地缓存
+                </a>
+                <a class="download-link external" href="https://github.com/Homebrew/brew/releases/latest" target="_blank" rel="noopener noreferrer">
+                    <span class="link-icon">🔗</span> 官方渠道
+                </a>
+            </div>
+        </div>
+
+        <div class="tool-card">
+            <div class="tool-header">
+                <div class="tool-name">Traefik</div>
+            </div>
+            <p class="tool-desc">现代反向代理与负载均衡器，提供 ARM64 架构二进制。</p>
+            <div class="tool-links">
+                <a class="download-link local" href="/packages/Traefik_M.tar.gz">
+                    <span class="link-icon">💾</span> 本地缓存
+                </a>
+                <a class="download-link external" href="https://github.com/traefik/traefik/releases/latest" target="_blank" rel="noopener noreferrer">
+                    <span class="link-icon">🔗</span> 官方渠道
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p>提示：若本地缓存缺失，可先运行服务器端 <code>bash scripts/update_cache.sh</code> 同步最新安装包。</p>
+    </div>
+</div>
+</body>
+</html>

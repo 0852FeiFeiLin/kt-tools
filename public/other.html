@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>其他资源</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            line-height: 1.6;
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: white;
+            margin-bottom: 40px;
+            font-size: 2.5rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .category {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .category-title {
+            color: #333;
+            font-size: 1.8rem;
+            margin-bottom: 25px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #f093fb;
+            display: flex;
+            align-items: center;
+        }
+
+        .category-icon {
+            margin-right: 10px;
+            font-size: 1.6rem;
+        }
+
+        .resource-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .resource-card {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            border: 1px solid #e0e0e0;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-decoration: none;
+            display: block;
+        }
+
+        .resource-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            background: #fff;
+        }
+
+        .resource-icon {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .resource-name {
+            font-size: 1.1rem;
+            color: #2c3e50;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        .resource-desc {
+            font-size: 0.85rem;
+            color: #7f8c8d;
+        }
+
+        .nav-links {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .nav-link {
+            display: inline-flex;
+            align-items: center;
+            padding: 10px 20px;
+            background: white;
+            color: #f5576c;
+            text-decoration: none;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .nav-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .nav-link-icon {
+            margin-right: 8px;
+        }
+
+        .coming-soon {
+            text-align: center;
+            padding: 40px;
+            color: #999;
+            font-style: italic;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+
+            .category {
+                padding: 20px;
+            }
+
+            .category-title {
+                font-size: 1.5rem;
+            }
+
+            .resource-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+
+            .nav-links {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .nav-link {
+                width: 200px;
+                justify-content: center;
+            }
+        }
+
+        .footer {
+            text-align: center;
+            color: white;
+            margin-top: 50px;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📚 其他资源</h1>
+
+        <div class="nav-links">
+            <a href="/" class="nav-link">
+                <span class="nav-link-icon">🏠</span>
+                返回首页
+            </a>
+            <a href="/tools" class="nav-link">
+                <span class="nav-link-icon">🛠️</span>
+                常用工具
+            </a>
+            <a href="/packages" class="nav-link">
+                <span class="nav-link-icon">📦</span>
+                安装包目录
+            </a>
+            <a href="/files" class="nav-link">
+                <span class="nav-link-icon">📂</span>
+                文件浏览
+            </a>
+        </div>
+
+        <div class="category">
+            <h2 class="category-title">
+                <span class="category-icon">📖</span>
+                文档资料
+            </h2>
+            <div class="resource-grid">
+                <a href="/files" class="resource-card">
+                    <div class="resource-icon">📄</div>
+                    <div class="resource-name">技术文档</div>
+                    <div class="resource-desc">开发相关文档</div>
+                </a>
+                <a href="/files" class="resource-card">
+                    <div class="resource-icon">📊</div>
+                    <div class="resource-name">项目资料</div>
+                    <div class="resource-desc">项目文档和说明</div>
+                </a>
+                <a href="/files" class="resource-card">
+                    <div class="resource-icon">📝</div>
+                    <div class="resource-name">学习笔记</div>
+                    <div class="resource-desc">技术学习资料</div>
+                </a>
+            </div>
+        </div>
+
+        <div class="category">
+            <h2 class="category-title">
+                <span class="category-icon">💾</span>
+                资源文件
+            </h2>
+            <div class="resource-grid">
+                <a href="/packages" class="resource-card">
+                    <div class="resource-icon">📦</div>
+                    <div class="resource-name">安装包</div>
+                    <div class="resource-desc">软件安装文件</div>
+                </a>
+                <a href="/files" class="resource-card">
+                    <div class="resource-icon">🖼️</div>
+                    <div class="resource-name">图片素材</div>
+                    <div class="resource-desc">图片和设计资源</div>
+                </a>
+                <a href="/files" class="resource-card">
+                    <div class="resource-icon">🎬</div>
+                    <div class="resource-name">视频教程</div>
+                    <div class="resource-desc">教学视频资源</div>
+                </a>
+            </div>
+        </div>
+
+        <div class="category">
+            <h2 class="category-title">
+                <span class="category-icon">🔗</span>
+                快速链接
+            </h2>
+            <div class="resource-grid">
+                <a href="/files" class="resource-card">
+                    <div class="resource-icon">🌐</div>
+                    <div class="resource-name">网站收藏</div>
+                    <div class="resource-desc">常用网站链接</div>
+                </a>
+                <a href="/files" class="resource-card">
+                    <div class="resource-icon">🔧</div>
+                    <div class="resource-name">开发工具</div>
+                    <div class="resource-desc">在线开发工具</div>
+                </a>
+                <a href="/files" class="resource-card">
+                    <div class="resource-icon">📚</div>
+                    <div class="resource-name">参考文档</div>
+                    <div class="resource-desc">API和框架文档</div>
+                </a>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>更多资源正在整理中...</p>
+        </div>
+    </div>
+</body>
+</html>
