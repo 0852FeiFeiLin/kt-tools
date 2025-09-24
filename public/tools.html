@@ -67,9 +67,30 @@
         .link-icon { margin-right: 8px; font-size: 1.2rem; }
         .link-type { margin-left: 6px; font-size: 0.85rem; opacity: 0.9; }
         .code-snippet {
+            position: relative;
             margin-top: 15px; background: #2d3436; color: #ecf0f1;
             padding: 14px 16px; border-radius: 10px; font-family: "SFMono-Regular",Consolas,Menlo,monospace;
             font-size: 0.95rem; overflow-x: auto;
+        }
+        .copy-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(255,255,255,0.1);
+            color: #ecf0f1;
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 6px;
+            padding: 4px 10px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: background 0.2s ease, transform 0.2s ease;
+        }
+        .copy-button:hover {
+            background: rgba(255,255,255,0.2);
+            transform: translateY(-1px);
+        }
+        .copy-button:active {
+            transform: scale(0.98);
         }
         .footer {
             text-align: center; color: rgba(255,255,255,0.85);
@@ -104,7 +125,10 @@
                     <span class="link-icon">🧰</span> 下载 mac_m4_installer.sh
                 </a> -->
             </div>
-            <div id="quick-install-command" class="code-snippet">curl -fsSL http://&lt;SERVER_IP&gt;:&lt;PORT&gt;/installers/quick_install.sh | bash</div>
+            <div class="code-snippet" id="quick-install-wrapper">
+                <button class="copy-button" type="button" id="copy-command">复制</button>
+                <code id="quick-install-command">curl -fsSL http://&lt;SERVER_IP&gt;:&lt;PORT&gt;/installers/quick_install.sh | bash</code>
+            </div>
         </div>
     </div>
 
@@ -355,6 +379,41 @@
         if (!ip || !port) return;
         var cmd = 'curl -fsSL http://' + ip + ':' + port + '/installers/quick_install.sh | bash';
         snippet.textContent = cmd;
+      })
+      .catch(function() {
+        // 保留默认占位文本
+      });
+  })();
+</script>
+<script>
+  (function() {
+    var snippet = document.getElementById('quick-install-command');
+    if (!snippet) return;
+    fetch('/installers/quick_install.sh')
+      .then(function(res) {
+        if (!res.ok) throw new Error('failed to load quick_install.sh');
+        return res.text();
+      })
+      .then(function(content) {
+        var ipMatch = content.match(/SERVER_IP="([^"]+)"/);
+        var portMatch = content.match(/SERVER_PORT="([^"]+)"/);
+        var ip = ipMatch && ipMatch[1];
+        var port = portMatch && portMatch[1];
+        if (!ip || !port) return;
+        var cmd = 'curl -fsSL http://' + ip + ':' + port + '/installers/quick_install.sh | bash';
+        snippet.textContent = cmd;
+        var copyBtn = document.getElementById('copy-command');
+        if (copyBtn) {
+          copyBtn.addEventListener('click', function() {
+            navigator.clipboard.writeText(cmd).then(function() {
+              copyBtn.textContent = '已复制';
+              setTimeout(function() { copyBtn.textContent = '复制'; }, 2000);
+            }).catch(function() {
+              copyBtn.textContent = '复制失败';
+              setTimeout(function() { copyBtn.textContent = '复制'; }, 2000);
+            });
+          });
+        }
       })
       .catch(function() {
         // 保留默认占位文本
