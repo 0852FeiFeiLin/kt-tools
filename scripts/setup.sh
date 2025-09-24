@@ -101,11 +101,11 @@ update_env_var "$INSTALLER_DIR/mac_m4_installer.sh" "SERVER_IP" "$SERVER_IP"
 update_env_var "$INSTALLER_DIR/mac_m4_installer.sh" "SERVER_PORT" "$SERVER_PORT"
 update_env_var "$INSTALLER_DIR/mac_m4_installer.sh" "BASE_URL" "http://${SERVER_IP}:${SERVER_PORT}/packages"
 
-echo "⏰ 是否配置自动更新任务？(每月1日与16日凌晨3点运行)"
+echo "⏰ 是否配置自动更新任务？(每天凌晨3点运行)"
 read -p "输入 y/n (默认: y): " setup_cron
 
 if [[ "$setup_cron" != "n" && "$setup_cron" != "N" ]]; then
-    (crontab -l 2>/dev/null; echo "0 3 1,16 * * bash $UPDATE_SCRIPT >> $LOG_DIR/cron.log 2>&1") | crontab -
+    (crontab -l 2>/dev/null; echo "0 3 * * * bash $UPDATE_SCRIPT >> $LOG_DIR/cron.log 2>&1") | crontab -
     echo "✅ 已写入 cron 任务"
 else
     echo "⏭️  跳过 cron 配置"
