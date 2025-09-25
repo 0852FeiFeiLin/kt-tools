@@ -249,7 +249,6 @@ install_software() {
         "Git_M.dmg"
         "NodeJS_ARM64.pkg"
         "Homebrew.pkg"
-        "Traefik_M.tar.gz"
     )
 
     local installed_count=0
@@ -279,9 +278,6 @@ install_software() {
         fi
     done
 
-    if install_targz "Traefik_M.tar.gz"; then
-        ((installed_count++))
-    fi
 
     print_success "安装完成！成功安装 $installed_count/$total_count 个软件包"
 }
@@ -440,7 +436,6 @@ show_summary() {
     echo "   🔧 Git - 版本控制"
     echo "   🟢 Node.js - JavaScript运行环境"
     echo "   🍺 Homebrew - 包管理器"
-    echo "   🔀 Traefik - 反向代理"
     echo ""
     echo "📋 安装日志保存在: $INSTALL_LOG"
     echo ""
