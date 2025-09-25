@@ -365,13 +365,60 @@
 <script>
   (function() {
     var snippet = document.getElementById('quick-install-command');
+    var copyBtn = document.getElementById('copy-command');
     if (!snippet) return;
+
+    function setCopyFeedback(text) {
+      if (!copyBtn) return;
+      copyBtn.textContent = text;
+      setTimeout(function () { copyBtn.textContent = '复制'; }, 2000);
+    }
+
+    function legacyCopy(text) {
+      var textarea = document.createElement('textarea');
+      textarea.value = text;
+      textarea.setAttribute('readonly', '');
+      textarea.style.position = 'fixed';
+      textarea.style.top = '-9999px';
+      document.body.appendChild(textarea);
+      var success = false;
+      try {
+        textarea.focus();
+        textarea.select();
+        success = document.execCommand('copy');
+      } catch (err) {
+        success = false;
+      }
+      document.body.removeChild(textarea);
+      setCopyFeedback(success ? '已复制' : '复制失败');
+    }
+
+    function copyText(text) {
+      if (!copyBtn) return;
+      var normalized = text.trim();
+      if (navigator.clipboard && window.isSecureContext) {
+        navigator.clipboard.writeText(normalized).then(function () {
+          setCopyFeedback('已复制');
+        }).catch(function () {
+          legacyCopy(normalized);
+        });
+      } else {
+        legacyCopy(normalized);
+      }
+    }
+
+    if (copyBtn) {
+      copyBtn.addEventListener('click', function () {
+        copyText(snippet.textContent);
+      });
+    }
+
     fetch('/installers/quick_install.sh')
-      .then(function(res) {
+      .then(function (res) {
         if (!res.ok) throw new Error('failed to load quick_install.sh');
         return res.text();
       })
-      .then(function(content) {
+      .then(function (content) {
         var ipMatch = content.match(/SERVER_IP="([^"]+)"/);
         var portMatch = content.match(/SERVER_PORT="([^"]+)"/);
         var ip = ipMatch && ipMatch[1];
@@ -380,45 +427,10 @@
         var cmd = 'curl -fsSL http://' + ip + ':' + port + '/installers/quick_install.sh | bash';
         snippet.textContent = cmd;
       })
-      .catch(function() {
+      .catch(function () {
         // 保留默认占位文本
       });
   })();
-</script>
-<script>
-  (function() {
-    var snippet = document.getElementById('quick-install-command');
-    if (!snippet) return;
-    fetch('/installers/quick_install.sh')
-      .then(function(res) {
-        if (!res.ok) throw new Error('failed to load quick_install.sh');
-        return res.text();
-      })
-      .then(function(content) {
-        var ipMatch = content.match(/SERVER_IP="([^"]+)"/);
-        var portMatch = content.match(/SERVER_PORT="([^"]+)"/);
-        var ip = ipMatch && ipMatch[1];
-        var port = portMatch && portMatch[1];
-        if (!ip || !port) return;
-        var cmd = 'curl -fsSL http://' + ip + ':' + port + '/installers/quick_install.sh | bash';
-        snippet.textContent = cmd;
-        var copyBtn = document.getElementById('copy-command');
-        if (copyBtn) {
-          copyBtn.addEventListener('click', function() {
-            navigator.clipboard.writeText(cmd).then(function() {
-              copyBtn.textContent = '已复制';
-              setTimeout(function() { copyBtn.textContent = '复制'; }, 2000);
-            }).catch(function() {
-              copyBtn.textContent = '复制失败';
-              setTimeout(function() { copyBtn.textContent = '复制'; }, 2000);
-            });
-          });
-        }
-      })
-      .catch(function() {
-        // 保留默认占位文本
-      });
-  })();
-</script>
+</script></script>
 </body>
 </html>
