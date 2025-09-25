@@ -199,20 +199,9 @@ const handlePackages = (res, pathname) => {
     }
 
     if (stat.isDirectory()) {
-      const list = readDirectorySafe(targetPath).sort((a, b) => a.name.localeCompare(b.name));
-      const entries = list.map((dirent) => ({
-        name: dirent.name,
-        isDirectory: dirent.isDirectory(),
-        size: dirent.isDirectory() ? 0 : fs.statSync(path.join(targetPath, dirent.name)).size
-      }));
-      const html = generateDirectoryListing({
-        title: 'Mac 软件包缓存',
-        urlPath: pathname.endsWith('/') ? pathname : `${pathname}/`,
-        entries
-      });
-      res.statusCode = 200;
+      res.statusCode = 404;
       res.setHeader('Content-Type', 'text/html; charset=utf-8');
-      res.end(html);
+      res.end('<h1>404 - 页面未找到</h1>');
     } else {
       serveFile(res, targetPath, 'no-cache');
     }
@@ -292,6 +281,11 @@ const server = http.createServer((req, res) => {
   if (pathname.startsWith('/installers/')) {
     const rel = pathname.replace(/^\/installers\//, 'installers/');
     servePublic(res, rel);
+    return;
+  }
+
+  if (pathname.startsWith('/packages')) {
+    handlePackages(res, pathname);
     return;
   }
 
