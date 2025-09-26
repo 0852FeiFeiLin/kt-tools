@@ -256,7 +256,6 @@ install_software() {
         "ClashVerge_M.dmg"
         "VSCode_ARM64.zip"
         "WPS_M.zip"
-        "Git_M.dmg"
         "NodeJS_ARM64.pkg"
         "Homebrew.pkg"
     )
@@ -272,7 +271,7 @@ install_software() {
     done
 
     print_status "开始安装软件..."
-    for dmg in ChatGPT_M.dmg Chrome_M.dmg Docker_M.dmg Telegram_M.dmg WeChat_M.dmg Wave_M.dmg Qoder_M.dmg Trae_M.dmg Git_M.dmg ClashVerge_M.dmg; do
+       for dmg in ChatGPT_M.dmg Chrome_M.dmg Docker_M.dmg Telegram_M.dmg WeChat_M.dmg Wave_M.dmg Qoder_M.dmg Trae_M.dmg ClashVerge_M.dmg; do
         local label
         case "$dmg" in
             ChatGPT_M.dmg) label="🤖 ChatGPT - AI助手" ;;
@@ -283,7 +282,6 @@ install_software() {
             Wave_M.dmg) label="🌊 Wave Terminal - 新一代终端" ;;
             Qoder_M.dmg) label="🧠 Qoder - AI 开发助手" ;;
             Trae_M.dmg) label="🛰️ Trae - 系统监控工具" ;;
-            Git_M.dmg) label="🔧 Git - 版本控制" ;;
             ClashVerge_M.dmg) label="🔗 Clash Verge - 代理工具" ;;
             *) label="$dmg" ;;
         esac
@@ -389,13 +387,27 @@ install_codex_cli() {
 install_cli_tools() {
     print_status "安装CLI工具..."
 
-    install_claude_cli || true
-    install_codex_cli || true
-
     if ! command -v brew >/dev/null 2>&1; then
         print_status "安装 Homebrew..."
         /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
     fi
+
+    if command -v brew >/dev/null 2>&1; then
+        print_status "安装 Git (Homebrew)..."
+        if brew list git >/dev/null 2>&1 || brew install git >>"$INSTALL_LOG" 2>&1; then
+            if brew list git >/dev/null 2>&1; then
+                print_success "Git 安装成功"
+                git --version | tee -a "$INSTALL_LOG" >/dev/null 2>&1 || true
+            fi
+        else
+            print_warning "Git 安装失败，请手动执行: brew install git"
+        fi
+    else
+        print_warning "未检测到 Homebrew，无法自动安装 Git"
+    fi
+
+    install_claude_cli || true
+    install_codex_cli || true
 }
 
 # 配置程序坞
