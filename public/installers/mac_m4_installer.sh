@@ -120,6 +120,7 @@ install_dmg() {
     fi
 
     local installed=false
+    local errors=0
 
     local pkg_path
     pkg_path=$(find "$mount_point" -maxdepth 5 -type f -name "*.pkg" | head -1)
@@ -131,28 +132,38 @@ install_dmg() {
             installed=true
         else
             print_error "$pkg_basename 安装失败"
+            ((errors++))
         fi
     fi
 
-    local app_path
-    app_path=$(find "$mount_point" -maxdepth 5 -type d -name "*.app" -print | head -1)
+        local app_path
+    app_path=$(find "$mount_point" -maxdepth 5 -type d -name "*.app" | head -1)
     if [[ -n "$app_path" ]]; then
         local app_basename=$(basename "$app_path")
+        local target_app="/Applications/$app_basename"
         print_status "安装应用程序: $app_basename"
-        if sudo ditto "$app_path" "/Applications/$app_basename"; then
+        if [[ -d "$target_app" ]]; then
+            print_status "移除已有的 $app_basename"
+            sudo rm -rf "$target_app"
+        fi
+        if sudo ditto "$app_path" "$target_app"; then
             print_success "$app_basename 安装成功"
             installed=true
         else
             print_error "$app_basename 安装失败"
+            ((errors++))
         fi
-    fi
-
-    if [[ "$installed" = false ]]; then
-        print_warning "$dmg_file 中未找到可安装内容"
     fi
 
     hdiutil detach "$mount_point" -quiet >/dev/null 2>&1 || true
     rmdir "$mount_point" 2>/dev/null || true
+
+    if [[ "$installed" = true ]] && (( errors == 0 )); then
+        return 0
+    fi
+
+    print_warning "$dmg_file 安装未成功"
+    return 1
 }
 
 # 安装PKG文件
@@ -271,7 +282,7 @@ install_software() {
     done
 
     print_status "开始安装软件..."
-       for dmg in ChatGPT_M.dmg Chrome_M.dmg Docker_M.dmg Telegram_M.dmg WeChat_M.dmg Wave_M.dmg Qoder_M.dmg Trae_M.dmg ClashVerge_M.dmg; do
+           for dmg in ChatGPT_M.dmg Chrome_M.dmg Docker_M.dmg Telegram_M.dmg WeChat_M.dmg Wave_M.dmg Qoder_M.dmg Trae_M.dmg ClashVerge_M.dmg; do
         local label
         case "$dmg" in
             ChatGPT_M.dmg) label="🤖 ChatGPT - AI助手" ;;
