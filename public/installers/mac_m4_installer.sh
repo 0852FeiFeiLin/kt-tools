@@ -79,6 +79,8 @@ download_file() {
     local output_path="${TEMP_DIR}/${filename}"
 
     print_status "下载 $filename..."
+    print_status "源地址: $url"
+    print_status "保存路径: $output_path"
 
     if curl -L --connect-timeout 30 --max-time 600 -o "$output_path" "$url"; then
         if [[ -f "$output_path" && $(stat -f%z "$output_path") -gt 1000000 ]]; then
@@ -107,8 +109,9 @@ install_dmg() {
     print_status "安装 $dmg_file..."
 
     local mount_point
-    mount_point=$(hdiutil attach "$dmg_path" -nobrowse | grep -E '^/dev/' | awk '{print $NF}' | tail -1)
-    if [[ -z "$mount_point" ]]; then
+    mount_point=$(mktemp -d "/tmp/mount_${dmg_file%%.*}_XXXX")
+    if ! hdiutil attach "$dmg_path" -mountpoint "$mount_point" -nobrowse -quiet; then
+        rmdir "$mount_point" 2>/dev/null || true
         print_error "无法挂载 $dmg_file"
         return 1
     fi
@@ -116,7 +119,7 @@ install_dmg() {
     local installed=false
 
     local pkg_path
-    pkg_path=$(find "$mount_point" -maxdepth 3 -name "*.pkg" -type f | head -1)
+    pkg_path=$(find "$mount_point" -maxdepth 5 -type f -name "*.pkg" | head -1)
     if [[ -n "$pkg_path" ]]; then
         local pkg_basename=$(basename "$pkg_path")
         print_status "安装安装包: $pkg_basename"
@@ -128,21 +131,25 @@ install_dmg() {
         fi
     fi
 
-    local app_name
-    app_name=$(find "$mount_point" -maxdepth 2 -name "*.app" | head -1)
-    if [[ -n "$app_name" ]]; then
-        local app_basename=$(basename "$app_name")
+    local app_path
+    app_path=$(find "$mount_point" -maxdepth 5 -type d -name "*.app" -print | head -1)
+    if [[ -n "$app_path" ]]; then
+        local app_basename=$(basename "$app_path")
         print_status "安装应用程序: $app_basename"
-        cp -R "$app_name" /Applications/
-        print_success "$app_basename 安装成功"
-        installed=true
+        if sudo ditto "$app_path" "/Applications/$app_basename"; then
+            print_success "$app_basename 安装成功"
+            installed=true
+        else
+            print_error "$app_basename 安装失败"
+        fi
     fi
 
     if [[ "$installed" = false ]]; then
         print_warning "$dmg_file 中未找到可安装内容"
     fi
 
-    hdiutil detach "$mount_point" >/dev/null 2>&1
+    hdiutil detach "$mount_point" -quiet >/dev/null 2>&1 || true
+    rmdir "$mount_point" 2>/dev/null || true
 }
 
 # 安装PKG文件
@@ -283,21 +290,9 @@ install_software() {
 }
 
 install_claude_cli() {
-    print_status "安装 Claude Code CLI..."
-
-    if ! command -v npm >/dev/null 2>&1; then
-        print_warning "未检测到 npm，跳过 Claude Code CLI 安装"
-        print_status "请在安装 Node.js 后运行: npm install -g @anthropic/claude-code"
-        return 1
-    fi
-
-    if npm install -g @anthropic/claude-code >>"$INSTALL_LOG" 2>&1; then
-        print_success "Claude Code CLI 安装成功"
-        return 0
-    fi
-
-    print_warning "Claude Code CLI 安装失败，请检查网络后手动执行: npm install -g @anthropic/claude-code"
-    return 1
+    print_status "跳过 Claude Code CLI 安装（官方已下架 npm 包）"
+    print_status "如需使用，请参考 https://docs.anthropic.com/ 手动配置"
+    return 0
 }
 
 create_codex_wrapper() {
@@ -328,43 +323,24 @@ EOF_WRAPPER
 install_codex_cli() {
     print_status "安装 Codex CLI..."
 
-    local installed=false
-
-    if command -v pipx >/dev/null 2>&1; then
-        if pipx install --force openai >>"$INSTALL_LOG" 2>&1; then
-            print_success "Codex CLI (pipx) 安装成功"
-            installed=true
-        elif pipx upgrade openai >>"$INSTALL_LOG" 2>&1; then
-            print_success "Codex CLI (pipx) 已更新"
-            installed=true
-        fi
+    if ! command -v pip3 >/dev/null 2>&1; then
+        print_warning "未检测到 pip3，跳过 Codex CLI 安装"
+        print_status "请手动执行: pip3 install --upgrade openai"
+        return 1
     fi
 
-    if [[ "$installed" = false ]] && command -v pip3 >/dev/null 2>&1; then
-        if sudo -H pip3 install --upgrade openai >>"$INSTALL_LOG" 2>&1; then
-            print_success "Codex CLI (pip3) 安装成功"
-            installed=true
+    if sudo -H pip3 install --upgrade openai --trusted-host pypi.org --trusted-host files.pythonhosted.org >>"$INSTALL_LOG" 2>&1; then
+        if command -v pipx >/dev/null 2>&1; then
+            pipx install --force openai >>"$INSTALL_LOG" 2>&1 || true
         fi
-    fi
-
-    if [[ "$installed" = false ]] && command -v brew >/dev/null 2>&1; then
-        if brew install openai >>"$INSTALL_LOG" 2>&1 || brew upgrade openai >>"$INSTALL_LOG" 2>&1; then
-            print_success "Codex CLI (Homebrew) 安装成功"
-            installed=true
-        fi
-    fi
-
-    if [[ "$installed" = true ]]; then
         if command -v openai >/dev/null 2>&1; then
             create_codex_wrapper || true
-            print_status "Codex CLI 安装完成，可使用 'openai' 或 'codex' 命令"
-        else
-            print_warning "未检测到 openai 命令，请检查 PATH 设置"
+            print_success "OpenAI CLI 安装完成，可使用 'openai' 或 'codex' 命令"
+            return 0
         fi
-        return 0
     fi
 
-    print_warning "Codex CLI 安装失败，请手动执行: pip3 install --upgrade openai"
+    print_warning "OpenAI CLI 自动安装失败，请手动执行: pip3 install --upgrade openai --trusted-host pypi.org --trusted-host files.pythonhosted.org"
     return 1
 }
 
