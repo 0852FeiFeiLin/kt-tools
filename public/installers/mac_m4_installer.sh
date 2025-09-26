@@ -477,6 +477,20 @@ show_summary() {
             echo "   $item"
         done
     fi
+    if (( ${#CLI_SUCCESS[@]} > 0 )); then
+        echo ""
+        echo "✅ 已安装的 CLI 工具："
+        for item in "${CLI_SUCCESS[@]}"; do
+            echo "   $item"
+        done
+    fi
+    if (( ${#CLI_FAILED[@]} > 0 )); then
+        echo ""
+        echo "⚠️ 未成功安装的 CLI 工具："
+        for item in "${CLI_FAILED[@]}"; do
+            echo "   $item"
+        done
+    fi
     echo ""
     echo "📋 安装日志保存在: $INSTALL_LOG"
     echo ""
