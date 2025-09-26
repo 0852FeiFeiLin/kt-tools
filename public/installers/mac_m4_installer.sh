@@ -13,6 +13,9 @@ BASE_URL="http://192.168.9.148:8000/packages"
 TEMP_DIR="/tmp/mac_m4_installer"
 INSTALL_LOG="/tmp/mac_m4_install.log"
 
+SUCCESS_APPS=()
+FAILED_APPS=()
+
 # 颜色输出
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -260,33 +263,72 @@ install_software() {
 
     local installed_count=0
     local total_count=${#software_list[@]}
+    local success_list=()
+    local fail_list=()
 
     print_status "开始下载软件包..."
     for software in "${software_list[@]}"; do
-        download_file "$software" || continue
+        download_file "$software" || true
     done
 
     print_status "开始安装软件..."
     for dmg in ChatGPT_M.dmg Chrome_M.dmg Docker_M.dmg Telegram_M.dmg WeChat_M.dmg Wave_M.dmg Qoder_M.dmg Trae_M.dmg Git_M.dmg ClashVerge_M.dmg; do
+        local label
+        case "$dmg" in
+            ChatGPT_M.dmg) label="🤖 ChatGPT - AI助手" ;;
+            Chrome_M.dmg) label="🌐 Google Chrome - 浏览器" ;;
+            Docker_M.dmg) label="🐳 Docker Desktop - 容器平台" ;;
+            Telegram_M.dmg) label="💬 Telegram - 即时通讯" ;;
+            WeChat_M.dmg) label="💬 微信 WeChat - 社交通讯" ;;
+            Wave_M.dmg) label="🌊 Wave Terminal - 新一代终端" ;;
+            Qoder_M.dmg) label="🧠 Qoder - AI 开发助手" ;;
+            Trae_M.dmg) label="🛰️ Trae - 系统监控工具" ;;
+            Git_M.dmg) label="🔧 Git - 版本控制" ;;
+            ClashVerge_M.dmg) label="🔗 Clash Verge - 代理工具" ;;
+            *) label="$dmg" ;;
+        esac
         if install_dmg "$dmg"; then
             ((installed_count++))
+            success_list+=("$label")
+        else
+            fail_list+=("$label")
         fi
     done
 
     for zip in VSCode_ARM64.zip WPS_M.zip; do
+        local label
+        case "$zip" in
+            VSCode_ARM64.zip) label="📝 Visual Studio Code - 代码编辑器" ;;
+            WPS_M.zip) label="📊 WPS Office - 办公软件" ;;
+            *) label="$zip" ;;
+        esac
         if install_zip "$zip"; then
             ((installed_count++))
+            success_list+=("$label")
+        else
+            fail_list+=("$label")
         fi
     done
 
     for pkg in NodeJS_ARM64.pkg Homebrew.pkg; do
+        local label
+        case "$pkg" in
+            NodeJS_ARM64.pkg) label="🟢 Node.js - JavaScript运行环境" ;;
+            Homebrew.pkg) label="🍺 Homebrew - 包管理器" ;;
+            *) label="$pkg" ;;
+        esac
         if install_pkg "$pkg"; then
             ((installed_count++))
+            success_list+=("$label")
+        else
+            fail_list+=("$label")
         fi
     done
 
+    print_success "安装完成！成功安装 ${installed_count}/$total_count 个软件包"
 
-    print_success "安装完成！成功安装 $installed_count/$total_count 个软件包"
+    SUCCESS_APPS=("${success_list[@]}")
+    FAILED_APPS=("${fail_list[@]}")
 }
 
 install_claude_cli() {
@@ -397,21 +439,21 @@ show_summary() {
     echo "🎉 Mac M4 软件安装完成！"
     echo "======================================"
     echo ""
-    echo "✅ 已安装的软件："
-    echo "   🤖 ChatGPT - AI助手"
-    echo "   🌐 Google Chrome - 浏览器"
-    echo "   🐳 Docker Desktop - 容器平台"
-    echo "   💬 Telegram - 即时通讯"
-    echo "   💬 微信 WeChat - 社交通讯"
-    echo "   🌊 Wave Terminal - 新一代终端"
-    echo "   🧠 Qoder - AI 开发助手"
-    echo "   🛰️ Trae - 系统监控工具"
-    echo "   🔗 Clash Verge - 代理工具"
-    echo "   📝 Visual Studio Code - 代码编辑器"
-    echo "   📊 WPS Office - 办公软件"
-    echo "   🔧 Git - 版本控制"
-    echo "   🟢 Node.js - JavaScript运行环境"
-    echo "   🍺 Homebrew - 包管理器"
+    if (( ${#SUCCESS_APPS[@]} > 0 )); then
+        echo "✅ 已安装的软件："
+        for item in "${SUCCESS_APPS[@]}"; do
+            echo "   $item"
+        done
+    else
+        echo "⚠️ 本次没有成功安装的软件包"
+    fi
+    if (( ${#FAILED_APPS[@]} > 0 )); then
+        echo ""
+        echo "⚠️ 以下软件未成功安装："
+        for item in "${FAILED_APPS[@]}"; do
+            echo "   $item"
+        done
+    fi
     echo ""
     echo "📋 安装日志保存在: $INSTALL_LOG"
     echo ""
